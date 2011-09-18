@@ -1,0 +1,9 @@
+{
+    "license": "MIT",
+    "author": "Jorge Gallegos <kad@blegh.net>",
+    "maintainer": "Jorge Gallegos <kad@blegh.net>",
+    "version": "0.3",
+    "source": "git://github.com/thekad/puppet-module-mysql.git",
+    "project_page": "http://github.com/thekad/puppet-module-mysql",
+    "summary": "Puppet module for mysql-related resources."
+}
