@@ -14,7 +14,7 @@ define mysql::grant($on, $user='', $password='', $ensure='present', $grant='USAG
 
     exec {
         "mysql::grant::${title}":
-            command   => "/bin/echo '${mysql_line}' | ${mysql_cmd}",
+            command   => "/bin/echo ${mysql_line} | ${mysql_cmd}",
             logoutput => on_failure;
     }
 }
