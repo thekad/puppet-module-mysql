@@ -1,9 +1,10 @@
 class mysql::server inherits mysql::base {
 
+    include mysql::client
+
     group {
         'mysql':
-            ensure => present,
-            system => true;
+            ensure => present;
     }
 
     user {
@@ -13,8 +14,7 @@ class mysql::server inherits mysql::base {
             comment    => 'MySQL System User',
             home       => '/var/lib/mysql',
             managehome => false,
-            shell      => '/bin/false',
-            system     => true;
+            shell      => '/bin/false';
     }
 
     file {
@@ -22,19 +22,19 @@ class mysql::server inherits mysql::base {
             ensure  => directory,
             owner   => 'mysql',
             group   => 'mysql',
-            mode    => 07550,
+            mode    => 0755,
             require => User['mysql'];
         '/var/log/mysql':
             ensure  => directory,
             owner   => 'mysql',
             group   => 'mysql',
-            mode    => 07550,
+            mode    => 0755,
             require => User['mysql'];
         '/etc/mysql':
             ensure  => directory,
             mode    => 0775;
         '/etc/my.cnf':
-            content => template('modules/mysql/my.cnf.erb');
+            content => template('mysql/my.cnf.erb');
     }
 
     package {
