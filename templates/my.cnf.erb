@@ -42,8 +42,8 @@ thread_concurrency = <%= processorcount.to_i * 2 %>
 
 # Replication Master Server (default)
 # binary logging is required for replication
-log-bin       = /var/log/mysql/mysql-bin.log
-log-bin-index = /var/log/mysql/mysql-bin.index
+log-bin       = /var/lib/mysql/mysql-bin.log
+log-bin-index = /var/lib/mysql/mysql-bin.index
 
 # binary logging format - mixed recommended
 binlog_format=mixed
