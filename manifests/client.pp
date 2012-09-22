@@ -4,12 +4,11 @@
 # vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
 #
 
-class mysql::client inherits mysql::libs {
+class mysql::client inherits mysql::base {
 
     package {
         'mysql-client':
-            ensure => $mysql::params::install_version,
-            require => Package['mysql-libs'];
+            ensure => $mysql::params::install_version;
     }
 }
 

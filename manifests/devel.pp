@@ -8,8 +8,7 @@ class mysql::devel inherits mysql::base {
 
     package {
         'mysql-devel':
-            ensure => $mysql::params::install_version,
-            require => Package['mysql-libs'];
+            ensure => $mysql::params::install_version;
     }
 }
 

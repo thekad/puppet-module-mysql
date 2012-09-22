@@ -6,12 +6,5 @@
 
 class mysql::base {
 
-    package {
-        'mysql-libs':
-            ensure => $mysql::params::install_version,
-        'mysql-test':
-            ensure => $mysql::params::install_version,
-            require => Package['mysql-libs'];
-    }
+    include mysql::params
 }
-
