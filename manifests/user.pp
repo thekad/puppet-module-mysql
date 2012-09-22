@@ -1,5 +1,8 @@
-# -*- mode: puppet; sh-basic-offset: 4; indent-tabs-mode: nil; coding: utf-8 -*-
-# vim: tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8
+#!/usr/bin/env puppet
+#
+# -*- mode:puppet; sh-basic-offset:4; indent-tabs-mode:nil; coding:utf-8 -*-
+# vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
+#
 
 define mysql::user($user='', $host='localhost', $password='', $ensure='present') {
 
@@ -7,8 +10,6 @@ define mysql::user($user='', $host='localhost', $password='', $ensure='present')
         ''      => $name,
         default => $user,
     }
-
-    $mysql_cmd = 'mysql -A -uroot -hlocalhost'
 
     case $ensure {
         'present': {
@@ -27,14 +28,14 @@ define mysql::user($user='', $host='localhost', $password='', $ensure='present')
 
     exec {
         "mysql::user::${username}@${host}::${ensure}":
-            command   => "/bin/echo ${mysql_line} | ${mysql_cmd}",
+            command   => "echo '${mysql_line}' | ${mysql::params::exec_cmd}",
             logoutput => on_failure,
             unless    => $ensure ? {
-                'present' => "/bin/echo ${mysql_check} | ${mysql_cmd}",
+                'present' => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
                 default   => undef,
             },
             onlyif    => $ensure ? {
-                /(absent|purged)/ => "/bin/echo ${mysql_check} | ${mysql_cmd}",
+                /(absent|purged)/ => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
                 default           => undef,
             };
     }
@@ -46,9 +47,9 @@ define mysql::user($user='', $host='localhost', $password='', $ensure='present')
 
         exec {
             "mysql::user::${username}@${host}::password":
-                command   => "/bin/echo ${mysql_pass} | ${mysql_cmd} mysql",
+                command   => "echo '${mysql_pass}' | ${mysql::params::exec_cmd} mysql",
                 logoutput => on_failure,
-                onlyif    => "[ 0 -eq $( /bin/echo ${mysql_check_pass} | ${mysql_cmd} mysql | tail -1 ) ]",
+                onlyif    => "[ 0 -eq $( echo '${mysql_check_pass}' | ${mysql::params::exec_cmd} mysql | tail -1 ) ]",
                 require   => Exec["mysql::user::${username}@${host}::${ensure}"];
         }
     }

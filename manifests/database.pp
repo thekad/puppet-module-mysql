@@ -1,5 +1,8 @@
-# -*- mode: puppet; sh-basic-offset: 4; indent-tabs-mode: nil; coding: utf-8 -*-
-# vim: tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8
+#!/usr/bin/env puppet
+#
+# -*- mode:puppet; sh-basic-offset:4; indent-tabs-mode:nil; coding:utf-8 -*-
+# vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
+#
 
 define mysql::database($db='', $ensure='present') {
 
@@ -8,7 +11,6 @@ define mysql::database($db='', $ensure='present') {
         default => $db,
     }
 
-    $mysql_cmd = 'mysql -A -uroot -hlocalhost'
     $mysql_check = "USE '${database}'"
 
     case $ensure {
@@ -26,14 +28,14 @@ define mysql::database($db='', $ensure='present') {
 
     exec {
         "mysql::database::${database}::${ensure}":
-            command   => "/bin/echo ${mysql_line} | ${mysql_cmd}",
+            command   => "echo '${mysql_line}' | ${mysql::params::exec_cmd}",
             logoutput => on_failure,
             unless    => $ensure ? {
-                'present' => "/bin/echo ${mysql_check} | ${mysql_cmd}",
+                'present' => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
                 default   => undef,
             },
             onlyif    => $ensure ? {
-                /(purged|absent)/ => "/bin/echo ${mysql_check} | ${mysql_cmd}",
+                /(purged|absent)/ => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
                 default           => undef,
             };
     }
