@@ -6,9 +6,17 @@
 
 class mysql::client inherits mysql::base {
 
-    package {
-        'mysql-client':
-            ensure => $mysql::params::install_version;
+    @package {
+        'mysql':
+            tag     => 'mysql',
+            require => Package['mysql-libs'],
+            ensure  => $mysql::params::install_version;
+        'MariaDB-client':
+            tag     => 'mariadb',
+            require => Package['MariaDB-common'],
+            ensure  => $mysql::params::install_version;
     }
+
+    Package <| tag == $mysql::params::install_flavor |>
 }
 

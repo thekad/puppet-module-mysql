@@ -4,9 +4,7 @@
 # vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
 #
 
-class mysql::server inherits mysql::base {
-
-    include mysql::client
+class mysql::server inherits mysql::client {
 
     group {
         'mysql':
@@ -43,11 +41,20 @@ class mysql::server inherits mysql::base {
             content => template('mysql/my.cnf.erb');
     }
 
-    package {
+    @package {
         'mysql-server':
-            ensure => $mysql::params::install_version,
+            ensure  => $mysql::params::install_version,
+            tag     => 'mysql',
             require => [
-                Package['mysql-libs'],
+                User['mysql'],
+                File['/var/lib/mysql'],
+                File['/var/log/mysql'],
+                File['/etc/my.cnf'],
+            ];
+        'MariaDB-server':
+            ensure  => $mysql::params::install_version,
+            tag     => 'mariadb',
+            require => [
                 User['mysql'],
                 File['/var/lib/mysql'],
                 File['/var/log/mysql'],
@@ -55,11 +62,21 @@ class mysql::server inherits mysql::base {
             ];
     }
 
-    service {
+    Package <| tag == $mysql::params::install_flavor |>
+
+    @service {
         'mysqld':
-            ensure  => running,
-            require => Package['mysql-server'],
-            enable  => true;
+            tag     => 'mysql',
+            ensure  => $mysql::params::ensure_service,
+            enable  => $mysql::params::enable_service,
+            require => Package['mysql-server'];
+        'mysql':
+            tag     => 'mariadb',
+            ensure  => $mysql::params::ensure_service,
+            enable  => $mysql::params::enable_service,
+            require => Package['MariaDB-server'];
     }
+
+    Service <| tag == $mysql::params::install_flavor |>
 }
 

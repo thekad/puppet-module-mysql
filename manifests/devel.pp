@@ -6,9 +6,17 @@
 
 class mysql::devel inherits mysql::base {
 
-    package {
+    @package {
         'mysql-devel':
-            ensure => $mysql::params::install_version;
+            tag     => 'mysql',
+            require => Package['mysql-libs'],
+            ensure  => $mysql::params::install_version;
+        'MariaDB-devel':
+            tag     => 'mariadb',
+            require => Package['MariaDB-common'],
+            ensure  => $mysql::params::install_version;
     }
+
+    Package <| tag == $mysql::params::install_flavor |>
 }
 

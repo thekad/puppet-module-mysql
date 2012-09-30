@@ -7,4 +7,23 @@
 class mysql::base {
 
     include mysql::params
+
+    @package {
+        'mysql-libs':
+            tag     => 'mysql',
+            ensure  => $mysql::params::install_version;
+        'MariaDB-common':
+            tag     => 'mariadb',
+            ensure  => $mysql::params::install_version;
+        'MariaDB-shared':
+            tag     => 'mariadb',
+            require => Package['MariaDB-common'],
+            ensure  => $mysql::params::install_version;
+        'MariaDB-compat':
+            tag     => 'mariadb',
+            require => Package['MariaDB-common'],
+            ensure  => $mysql::params::install_version;
+    }
+
+    Package <| tag == $mysql::params::install_flavor |>
 }

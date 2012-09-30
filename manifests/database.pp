@@ -11,7 +11,7 @@ define mysql::database($db='', $ensure='present') {
         default => $db,
     }
 
-    $mysql_check = "USE '${database}'"
+    $mysql_check = shellquote("USE '${database}'")
 
     case $ensure {
         'present': {
@@ -28,14 +28,14 @@ define mysql::database($db='', $ensure='present') {
 
     exec {
         "mysql::database::${database}::${ensure}":
-            command   => "echo '${mysql_line}' | ${mysql::params::exec_cmd}",
+            command   => "echo ${mysql_line} | ${mysql::params::exec_cmd}",
             logoutput => on_failure,
             unless    => $ensure ? {
-                'present' => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
+                'present' => "echo ${mysql_check} | ${mysql::params::exec_cmd}",
                 default   => undef,
             },
             onlyif    => $ensure ? {
-                /(purged|absent)/ => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
+                /(purged|absent)/ => "echo ${mysql_check} | ${mysql::params::exec_cmd}",
                 default           => undef,
             };
     }

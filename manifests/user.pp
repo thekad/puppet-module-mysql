@@ -28,14 +28,14 @@ define mysql::user($user='', $host='localhost', $password='', $ensure='present')
 
     exec {
         "mysql::user::${username}@${host}::${ensure}":
-            command   => "echo '${mysql_line}' | ${mysql::params::exec_cmd}",
+            command   => "echo ${mysql_line} | ${mysql::params::exec_cmd}",
             logoutput => on_failure,
             unless    => $ensure ? {
-                'present' => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
+                'present' => "echo ${mysql_check} | ${mysql::params::exec_cmd}",
                 default   => undef,
             },
             onlyif    => $ensure ? {
-                /(absent|purged)/ => "echo '${mysql_check}' | ${mysql::params::exec_cmd}",
+                /(absent|purged)/ => "echo ${mysql_check} | ${mysql::params::exec_cmd}",
                 default           => undef,
             };
     }
@@ -47,11 +47,10 @@ define mysql::user($user='', $host='localhost', $password='', $ensure='present')
 
         exec {
             "mysql::user::${username}@${host}::password":
-                command   => "echo '${mysql_pass}' | ${mysql::params::exec_cmd} mysql",
+                command   => "echo ${mysql_pass} | ${mysql::params::exec_cmd} mysql",
                 logoutput => on_failure,
-                onlyif    => "[ 0 -eq $( echo '${mysql_check_pass}' | ${mysql::params::exec_cmd} mysql | tail -1 ) ]",
+                onlyif    => "[ 0 -eq $( echo ${mysql_check_pass} | ${mysql::params::exec_cmd} mysql | tail -1 ) ]",
                 require   => Exec["mysql::user::${username}@${host}::${ensure}"];
         }
     }
 }
-
